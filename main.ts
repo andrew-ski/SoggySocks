@@ -4,6 +4,7 @@ namespace SpriteKind {
     export const RogueWave = SpriteKind.create()
     export const Pebble = SpriteKind.create()
     export const Crab = SpriteKind.create()
+    export const BeachBall = SpriteKind.create()
 }
 function pebble () {
     Pebble = sprites.create(img`
@@ -13,11 +14,75 @@ function pebble () {
     Pebble.setVelocity(0, RunSpeed)
     Pebble.z = 1
 }
+function Spawn_Rocks () {
+    if (Math.percentChance(33)) {
+        Rock = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . f f f f . . . . . . . . 
+            . . . f d d d f f f . . . . . . 
+            . . f d b b b d d d f f f . . . 
+            . f d b b b b b b b d d f f . . 
+            . f c b b b b b b b b b d f . . 
+            . f c b b b b b b b b b d f f . 
+            . f c b b b b b b b b b b c f . 
+            . . f c b b b b f f b b b c f . 
+            . f c b b b b b b b b b c f f . 
+            . f f c c c c b b b c c f f . . 
+            . . f f f f f c c c f f f . . . 
+            . . . . . . f f f f f . . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Obstacle)
+    } else if (Math.percentChance(33)) {
+        Rock = sprites.create(img`
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . . . . . . . . . . . 
+            . . . . . . f f f f f f f . . . 
+            . . . . . f f d d d d d f f . . 
+            . . . . f f d b b b b b d f . . 
+            . . . . f d b b b b b b d f f . 
+            . . . . f c b b b b b b b c f . 
+            . . . . f f c b b b b b b c f . 
+            . . . . f c b b b b b b c f f . 
+            . . . . f f c b b b b c f f . . 
+            . . . . . f f c c c c f f . . . 
+            . . . . . . f f f f f f . . . . 
+            . . . . . . . . . . . . . . . . 
+            `, SpriteKind.Obstacle)
+    } else {
+        Rock = sprites.create(img`
+            ........................
+            ........................
+            ..........fffffff.......
+            ........fffdddddffff....
+            ......fffddbbbbbdddff...
+            ...ffffddbbbbbbbbbbdf...
+            ..ffdddbbbbbbbbfbbbdff..
+            .ffdbbbbbbbbbbbbfbbbcf..
+            .fdbbbbbbbbbbbbbbbbbcf..
+            ffcbbbbbbbbbbbbbbbbcff..
+            fcbbbbbbbbbbbbbbbccff...
+            ffcbbbbbbbbbbbbbcfff....
+            .ffcbbbbbbbbbbcccf......
+            ..ffcccccbbcccffff......
+            ....fffffccffff.........
+            ........ffff............
+            `, SpriteKind.Obstacle)
+    }
+    Obstacle_Properties(Rock)
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Obstacle, function (sprite, otherSprite) {
     sprite.y += -3
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.RogueWave, function (sprite, otherSprite) {
     game.over(false)
+})
+sprites.onOverlap(SpriteKind.Player, SpriteKind.BeachBall, function (sprite, otherSprite) {
+    Has_Ball = true
 })
 sprites.onOverlap(SpriteKind.Obstacle, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
@@ -25,11 +90,22 @@ sprites.onOverlap(SpriteKind.Obstacle, SpriteKind.Enemy, function (sprite, other
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Obstacle, function (sprite, otherSprite) {
     sprite.x += 16
 })
+sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Obstacle, function (sprite, otherSprite) {
+    sprite.destroy()
+    Has_Ball = false
+    otherSprite.destroy()
+})
+sprites.onOverlap(SpriteKind.Obstacle, SpriteKind.Obstacle, function (sprite, otherSprite) {
+    sprite.x += 8
+})
 function Obstacle_Properties (mySprite: Sprite) {
-    mySprite.setPosition(randint(0, 160), 120)
+    mySprite.setPosition(randint(0, 160), randint(120, 145))
     mySprite.setVelocity(0, RunSpeed)
     mySprite.z = 2
 }
+sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Enemy, function (sprite, otherSprite) {
+    sprite.destroy()
+})
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
 })
@@ -273,19 +349,24 @@ function initP1 () {
     P1.setPosition(80, 80)
     P1.z = 2
 }
+sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Crab, function (sprite, otherSprite) {
+    sprite.destroy()
+    Has_Ball = false
+    otherSprite.destroy()
+})
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.follow(otherSprite, 200)
-    otherSprite.x += randint(-20, 20)
+    otherSprite.x += randint(-16, 16)
     pause(100)
-    otherSprite.x += randint(-20, 20)
+    otherSprite.x += randint(-16, 16)
     pause(100)
-    otherSprite.x += randint(-20, 20)
+    otherSprite.x += randint(-16, 16)
     pause(100)
-    otherSprite.x += randint(-20, 20)
+    otherSprite.x += randint(-16, 16)
     pause(100)
-    otherSprite.x += randint(-20, 20)
+    otherSprite.x += randint(-16, 16)
     pause(100)
-    otherSprite.x += randint(-20, 20)
+    otherSprite.x += randint(-16, 16)
     otherSprite.vx += randint(-50, 50)
     pause(500)
     sprite.destroy()
@@ -293,89 +374,88 @@ sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSpr
 sprites.onOverlap(SpriteKind.Pebble, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
 })
+function Spawn_Crabs () {
+    if (Math.percentChance(33)) {
+        if (Math.percentChance(50)) {
+            Crab = sprites.create(img`
+                ...................
+                .f..f.........f..f.
+                f2ff4f.......f4ff2f
+                f2ff4f.......f4ff2f
+                f222f...f.f...f222f
+                .f22f.ff2f2ff.f22f.
+                ..f2ff4422244ff2f..
+                ..f2f222222222f2f..
+                ...ff222222222ff...
+                ..ff22222222222ff..
+                .f2f22222222222f2f.
+                f2f.f222222222f.f2f
+                .f..f222222222f..f.
+                ...f2f4222224f2f...
+                ..f2f.f44444f.f2f..
+                ..ff...fffff...ff..
+                `, SpriteKind.Crab)
+        } else {
+            Crab = sprites.create(img`
+                ...................
+                .f..f.........f..f.
+                f8ff6f.......f6ff8f
+                f8ff6f.......f6ff8f
+                f888f...f.f...f888f
+                .f88f.ff8f8ff.f88f.
+                ..f8ff6688866ff8f..
+                ..f8f888888888f8f..
+                ...ff888888888ff...
+                ..ff88888888888ff..
+                .f8f88888888888f8f.
+                f8f.f888888888f.f8f
+                .f..f888888888f..f.
+                ...f8f6888886f8f...
+                ..f8f.f66666f.f8f..
+                ..ff...fffff...ff..
+                `, SpriteKind.Crab)
+        }
+        Obstacle_Properties(Crab)
+    }
+}
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     game.over(false)
 })
-let Crab: Sprite = null
+let Beach_Ball: Sprite = null
 let RogueWave: Sprite = null
-let Rock: Sprite = null
+let Crab: Sprite = null
 let P1: Sprite = null
 let Wave: Sprite = null
+let Rock: Sprite = null
 let Pebble: Sprite = null
+let Has_Ball = false
 let RunSpeed = 0
 game.splash("The ocean is coming to reclaim your genes.")
 scene.setBackgroundColor(13)
 info.setScore(0)
-RunSpeed = -70
+RunSpeed = -55
 let ObsticalRate = 2000
+let Bonus_Rate = 1800
 let WaveRate = 4000
+Has_Ball = false
 initP1()
 initWave()
 game.onUpdate(function () {
     for (let value of sprites.allOfKind(SpriteKind.RogueWave)) {
         value.y = Wave.bottom
     }
+    if (Has_Ball == true) {
+        for (let value of sprites.allOfKind(SpriteKind.BeachBall)) {
+            value.setPosition(P1.x, P1.bottom)
+        }
+    }
 })
 game.onUpdateInterval(ObsticalRate + randint(-50, 50), function () {
-    if (Math.percentChance(33)) {
-        Rock = sprites.create(img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . f f f f . . . . . . . . 
-            . . . f d d d f f f . . . . . . 
-            . . f d b b b d d d f f f . . . 
-            . f d b b b b b b b d d f f . . 
-            . f c b b b b b b b b b d f . . 
-            . f c b b b b b b b b b d f f . 
-            . f c b b b b b b b b b b c f . 
-            . . f c b b b b f f b b b c f . 
-            . f c b b b b b b b b b c f f . 
-            . f f c c c c b b b c c f f . . 
-            . . f f f f f c c c f f f . . . 
-            . . . . . . f f f f f . . . . . 
-            . . . . . . . . . . . . . . . . 
-            `, SpriteKind.Obstacle)
-    } else if (Math.percentChance(33)) {
-        Rock = sprites.create(img`
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . . . . . . . . . . . 
-            . . . . . . f f f f f f f . . . 
-            . . . . . f f d d d d d f f . . 
-            . . . . f f d b b b b b d f . . 
-            . . . . f d b b b b b b d f f . 
-            . . . . f c b b b b b b b c f . 
-            . . . . f f c b b b b b b c f . 
-            . . . . f c b b b b b b c f f . 
-            . . . . f f c b b b b c f f . . 
-            . . . . . f f c c c c f f . . . 
-            . . . . . . f f f f f f . . . . 
-            . . . . . . . . . . . . . . . . 
-            `, SpriteKind.Obstacle)
-    } else {
-        Rock = sprites.create(img`
-            ........................
-            ........................
-            ..........fffffff.......
-            ........fffdddddffff....
-            ......fffddbbbbbdddff...
-            ...ffffddbbbbbbbbbbdf...
-            ..ffdddbbbbbbbbfbbbdff..
-            .ffdbbbbbbbbbbbbfbbbcf..
-            .fdbbbbbbbbbbbbbbbbbcf..
-            ffcbbbbbbbbbbbbbbbbcff..
-            fcbbbbbbbbbbbbbbbccff...
-            ffcbbbbbbbbbbbbbcfff....
-            .ffcbbbbbbbbbbcccf......
-            ..ffcccccbbcccffff......
-            ....fffffccffff.........
-            ........ffff............
-            `, SpriteKind.Obstacle)
+    Spawn_Rocks()
+    Spawn_Crabs()
+    if (info.score() > 30) {
+        Spawn_Rocks()
     }
-    Obstacle_Properties(Rock)
 })
 game.onUpdateInterval(WaveRate, function () {
     if (Math.percentChance(50)) {
@@ -2228,27 +2308,18 @@ game.onUpdateInterval(WaveRate, function () {
     RogueWave.z = 2
     RogueWave.setPosition(randint(0, 160), Wave.bottom)
 })
-game.onUpdateInterval(1500 + randint(-50, 50), function () {
-    if (Math.percentChance(33)) {
-        Crab = sprites.create(img`
-            ...................
-            .f..f.........f..f.
-            f2ff4f.......f4ff2f
-            f2ff4f.......f4ff2f
-            f222f...f.f...f222f
-            .f22f.ff2f2ff.f22f.
-            ..f2ff4422244ff2f..
-            ..f2f222222222f2f..
-            ...ff222222222ff...
-            ..ff22222222222ff..
-            .f2f22222222222f2f.
-            f2f.f222222222f.f2f
-            .f..f222222222f..f.
-            ...f2f4222224f2f...
-            ..f2f.f44444f.f2f..
-            ..ff...fffff...ff..
-            `, SpriteKind.Crab)
-        Obstacle_Properties(Crab)
+game.onUpdateInterval(7500, function () {
+    if (WaveRate > 1000) {
+        WaveRate += -400
+    }
+    if (ObsticalRate > 500) {
+        ObsticalRate += -250
+    }
+    if (RunSpeed >= -120) {
+        RunSpeed += -5
+    }
+    if (Bonus_Rate < 4000) {
+        Bonus_Rate += 100
     }
 })
 game.onUpdateInterval(1000, function () {
@@ -2257,8 +2328,26 @@ game.onUpdateInterval(1000, function () {
 game.onUpdateInterval(200, function () {
     pebble()
 })
-game.onUpdateInterval(10000, function () {
-    WaveRate += -500
-    ObsticalRate += -250
-    RunSpeed += -10
+game.onUpdateInterval(Bonus_Rate + randint(-50, 50), function () {
+    if (Math.percentChance(25) && Has_Ball == false) {
+        Beach_Ball = sprites.create(img`
+            ...................
+            ......fffffff......
+            ....ff111f888ff....
+            ...ff1111f8888ff...
+            ...f3f111f888f1f...
+            ..f333f11f88f111f..
+            ..f3333f1f8f1111f..
+            ..f33333fff11111f..
+            ..fffffff1fffffff..
+            ..f11111fff33333f..
+            ..f1111f5f1f3333f..
+            ..f111f55f11f333f..
+            ...f1f555f111f3f...
+            ...ff5555f1111ff...
+            ....ff555f111ff....
+            ......fffffff......
+            `, SpriteKind.BeachBall)
+        Obstacle_Properties(Beach_Ball)
+    }
 })
