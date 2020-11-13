@@ -8,15 +8,15 @@ namespace SpriteKind {
     export const Boogie_Board = SpriteKind.create()
 }
 function pebble () {
-    Pebble2 = sprites.create(img`
+    Pebbles = sprites.create(img`
         f 
         `, SpriteKind.Pebble)
-    Pebble2.setPosition(randint(0, 160), 120)
-    Pebble2.setVelocity(0, RunSpeed)
-    Pebble2.z = 0
+    Pebbles.setPosition(randint(0, 160), 120)
+    Pebbles.setVelocity(0, RunSpeed)
+    Pebbles.z = 0
 }
 function Spawn_Rocks () {
-    if (Math.percentChance(33)) {
+    if (Math.percentChance(45)) {
         Rock = sprites.create(img`
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -35,7 +35,7 @@ function Spawn_Rocks () {
             . . . . . . f f f f f . . . . . 
             . . . . . . . . . . . . . . . . 
             `, SpriteKind.Obstacle)
-    } else if (Math.percentChance(33)) {
+    } else if (Math.percentChance(40)) {
         Rock = sprites.create(img`
             . . . . . . . . . . . . . . . . 
             . . . . . . . . . . . . . . . . 
@@ -78,8 +78,8 @@ function Spawn_Rocks () {
 }
 sprites.onOverlap(SpriteKind.Boogie_Board, SpriteKind.Crab, function (sprite, otherSprite) {
     if (Has_Board == true) {
-        sprite.destroy()
         Has_Board = false
+        sprite.destroy()
         BoogieBoard.setFlag(SpriteFlag.StayInScreen, false)
         animation.runImageAnimation(
         P1,
@@ -126,7 +126,7 @@ sprites.onOverlap(SpriteKind.Boogie_Board, SpriteKind.Crab, function (sprite, ot
     }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Obstacle, function (sprite, otherSprite) {
-    sprite.y += -3
+    sprite.y += -2
 })
 function Spawn_RogueWave () {
     if (Math.percentChance(50)) {
@@ -2013,7 +2013,8 @@ function Spawn_RogueWave () {
     RogueWave2.setPosition(randint(0, 160), Wave.bottom)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.RogueWave, function (sprite, otherSprite) {
-    game.over(false)
+    game.splash("Soggy Socks")
+    game.over(false, effects.bubbles)
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.BeachBall, function (sprite, otherSprite) {
     Has_Ball = true
@@ -2040,7 +2041,7 @@ sprites.onOverlap(SpriteKind.Obstacle, SpriteKind.Obstacle, function (sprite, ot
     sprite.x += 8
 })
 function Obstacle_Properties (mySprite: Sprite) {
-    mySprite.setPosition(randint(0, 160), randint(120, 160))
+    mySprite.setPosition(randint(0, 160), randint(120, 180))
     mySprite.setVelocity(0, RunSpeed)
     mySprite.z = 2
 }
@@ -2049,8 +2050,8 @@ sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Enemy, function (sprite, othe
 })
 sprites.onOverlap(SpriteKind.Boogie_Board, SpriteKind.Obstacle, function (sprite, otherSprite) {
     if (Has_Board == true) {
-        sprite.destroy()
         Has_Board = false
+        sprite.destroy()
         BoogieBoard.setFlag(SpriteFlag.StayInScreen, false)
         animation.runImageAnimation(
         P1,
@@ -2445,6 +2446,51 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Boogie_Board, function (sprite, 
     pause(500)
     BoogieBoard.setFlag(SpriteFlag.StayInScreen, true)
 })
+function Spawn_Stars () {
+    if (Math.percentChance(33)) {
+        Stars = sprites.create(img`
+            . 6 . . 6 . . 6 . 
+            6 7 6 . 7 . 6 7 6 
+            . 6 7 6 7 6 7 6 . 
+            . . 6 7 7 7 6 . . 
+            6 7 7 7 7 7 7 7 6 
+            . . 6 7 7 7 6 . . 
+            . 6 7 6 7 6 7 6 . 
+            6 7 6 . 7 . 6 7 6 
+            . 6 . . 6 . . 6 . 
+            `, SpriteKind.Pebble)
+    } else if (Math.percentChance(66)) {
+        Stars = sprites.create(img`
+            . . . . b . . . . 
+            . . . b a b . . . 
+            . . . b a b . . . 
+            . b b a a a b b . 
+            b a a a a a a a b 
+            . b b a a a b b . 
+            . . . b a b . . . 
+            . . . b a b . . . 
+            . . . . b . . . . 
+            `, SpriteKind.Pebble)
+    } else {
+        Stars = sprites.create(img`
+            . . . . . . . . . 
+            . . . . 4 . . . . 
+            . . 4 . 4 . 4 . . 
+            . . . 4 . 4 . . . 
+            . 4 4 . . . 4 4 . 
+            . . . 4 . 4 . . . 
+            . . 4 . 4 . 4 . . 
+            . . . . 4 . . . . 
+            . . . . . . . . . 
+            `, SpriteKind.Pebble)
+    }
+    Stars.setPosition(randint(0, 160), randint(120, 145))
+    Stars.setVelocity(0, RunSpeed)
+    Stars.z = 0
+    if (Stars.overlapsWith(Wave)) {
+        Stars.destroy()
+    }
+}
 sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Crab, function (sprite, otherSprite) {
     if (Has_Ball == true) {
         sprite.destroy()
@@ -2456,20 +2502,25 @@ sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Crab, function (sprite, other
 })
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.follow(otherSprite, 200)
-    otherSprite.x += randint(0, 20)
-    pause(100)
-    otherSprite.x += randint(-20, 0)
-    pause(100)
-    otherSprite.x += randint(0, 20)
-    pause(100)
-    otherSprite.x += randint(-20, 0)
-    pause(100)
-    otherSprite.x += randint(0, 20)
+    otherSprite.x += randint(-20, 20)
     pause(100)
     otherSprite.x += randint(-20, 20)
-    otherSprite.vx += randint(-50, 50)
-    pause(500)
+    sprite.setPosition(P1.x, P1.y)
+    pause(100)
+    otherSprite.x += randint(-20, 20)
+    sprite.setPosition(P1.x, P1.y)
+    pause(100)
+    otherSprite.x += randint(-20, 20)
+    sprite.setPosition(P1.x, P1.y)
+    pause(100)
+    otherSprite.x += randint(-20, 20)
+    pause(100)
+    otherSprite.x += randint(-20, 20)
+    sprite.setPosition(P1.x, P1.y)
+    sprite.setPosition(P1.x, P1.y)
+    pause(250)
     sprite.destroy()
+    otherSprite.vx += randint(-50, 50)
 })
 sprites.onOverlap(SpriteKind.Pebble, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
@@ -2519,23 +2570,26 @@ function Spawn_Crabs () {
     }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
-    game.over(false)
+    game.splash("Soggy Socks")
+    game.over(false, effects.bubbles)
 })
 let Beach_Ball: Sprite = null
 let Crab2: Sprite = null
+let Stars: Sprite = null
 let Wave: Sprite = null
 let RogueWave2: Sprite = null
 let P1: Sprite = null
 let BoogieBoard: Sprite = null
 let Rock: Sprite = null
-let Pebble2: Sprite = null
+let Pebbles: Sprite = null
 let Has_Board = false
 let Has_Ball = false
 let RunSpeed = 0
-game.splash("The ocean is coming to", "reclaim... everything.")
+game.splash("You wore socks & sandals.", "The tide is coming in.")
+game.splash("DON'T GET WET!")
 scene.setBackgroundColor(13)
 info.setScore(0)
-RunSpeed = -55
+RunSpeed = -65
 let ObsticalRate = 2000
 let Bonus_Rate = 1800
 let WaveRate = 4000
@@ -2554,7 +2608,7 @@ game.onUpdate(function () {
     }
     if (Has_Board == true) {
         for (let value3 of sprites.allOfKind(SpriteKind.Boogie_Board)) {
-            value3.setPosition(P1.x, P1.y + 3)
+            value3.setPosition(P1.x, P1.y + 8)
         }
     } else {
         P1.setVelocity(0, 0)
@@ -2579,9 +2633,10 @@ game.onUpdateInterval(7500, function () {
 })
 game.onUpdateInterval(1000, function () {
     info.changeScoreBy(1)
+    Spawn_Stars()
 })
 game.onUpdateInterval(Bonus_Rate, function () {
-    if (Math.percentChance(20) && (Has_Ball == false && Has_Board == false)) {
+    if (Math.percentChance(35) && (Has_Ball == false && Has_Board == false)) {
         if (Math.percentChance(50)) {
             Beach_Ball = sprites.create(img`
                 ...................
