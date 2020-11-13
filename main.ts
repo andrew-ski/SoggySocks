@@ -5,6 +5,7 @@ namespace SpriteKind {
     export const Pebble = SpriteKind.create()
     export const Crab = SpriteKind.create()
     export const BeachBall = SpriteKind.create()
+    export const Boogie_Board = SpriteKind.create()
 }
 function pebble () {
     Pebble = sprites.create(img`
@@ -75,6 +76,10 @@ function Spawn_Rocks () {
     }
     Obstacle_Properties(Rock)
 }
+sprites.onOverlap(SpriteKind.Boogie_Board, SpriteKind.Crab, function (sprite, otherSprite) {
+    Has_Board = false
+    sprite.destroy()
+})
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Obstacle, function (sprite, otherSprite) {
     sprite.y += -3
 })
@@ -83,6 +88,9 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.RogueWave, function (sprite, oth
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.BeachBall, function (sprite, otherSprite) {
     Has_Ball = true
+})
+sprites.onOverlap(SpriteKind.Boogie_Board, SpriteKind.Enemy, function (sprite, otherSprite) {
+    sprite.destroy()
 })
 sprites.onOverlap(SpriteKind.Obstacle, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
@@ -104,6 +112,10 @@ function Obstacle_Properties (mySprite: Sprite) {
     mySprite.z = 2
 }
 sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Enemy, function (sprite, otherSprite) {
+    sprite.destroy()
+})
+sprites.onOverlap(SpriteKind.Boogie_Board, SpriteKind.Obstacle, function (sprite, otherSprite) {
+    Has_Board = false
     sprite.destroy()
 })
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Enemy, function (sprite, otherSprite) {
@@ -287,22 +299,22 @@ function initWave () {
 }
 function initP1 () {
     P1 = sprites.create(img`
-        . . . . f f f f . . . . . 
-        . . f f f f f f f f . . . 
-        . f f f f f f c f f f . . 
-        f f f f f f c c f f f c . 
-        f f f c f f f f f f f c . 
-        c c c f f f e e f f c c . 
-        f f f f f e e f f c c f . 
-        f f f b f e e f b f f f . 
-        . f 4 1 f 4 4 f 1 4 f . . 
-        . f e 4 4 4 4 4 4 e f . . 
-        . f f f e e e e f f f . . 
-        f e f b 7 7 7 7 b f e f . 
-        e 4 f 7 7 7 7 7 7 f 4 e . 
-        e e f 6 6 6 6 6 6 f e e . 
-        . . . f f f f f f . . . . 
-        . . . f f . . f f . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
+        . . . . . . . . . . . . . 
         `, SpriteKind.Player)
     animation.runImageAnimation(
     P1,
@@ -349,6 +361,10 @@ function initP1 () {
     P1.setPosition(80, 80)
     P1.z = 2
 }
+sprites.onOverlap(SpriteKind.Player, SpriteKind.Boogie_Board, function (sprite, otherSprite) {
+    Has_Board = true
+    P1.setVelocity(0, 20)
+})
 sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Crab, function (sprite, otherSprite) {
     sprite.destroy()
     Has_Ball = false
@@ -421,6 +437,7 @@ function Spawn_Crabs () {
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
     game.over(false)
 })
+let BoogieBoard: Sprite = null
 let Beach_Ball: Sprite = null
 let RogueWave: Sprite = null
 let Crab: Sprite = null
@@ -428,6 +445,7 @@ let P1: Sprite = null
 let Wave: Sprite = null
 let Rock: Sprite = null
 let Pebble: Sprite = null
+let Has_Board = false
 let Has_Ball = false
 let RunSpeed = 0
 game.splash("The ocean is coming to reclaim your genes.")
@@ -438,6 +456,7 @@ let ObsticalRate = 2000
 let Bonus_Rate = 1800
 let WaveRate = 4000
 Has_Ball = false
+Has_Board = false
 initP1()
 initWave()
 game.onUpdate(function () {
@@ -448,6 +467,13 @@ game.onUpdate(function () {
         for (let value of sprites.allOfKind(SpriteKind.BeachBall)) {
             value.setPosition(P1.x, P1.bottom)
         }
+    }
+    if (Has_Board == true) {
+        for (let value of sprites.allOfKind(SpriteKind.Boogie_Board)) {
+            value.setPosition(P1.x, P1.bottom)
+        }
+    } else {
+        P1.setVelocity(0, 0)
     }
 })
 game.onUpdateInterval(ObsticalRate + randint(-50, 50), function () {
@@ -2329,7 +2355,7 @@ game.onUpdateInterval(200, function () {
     pebble()
 })
 game.onUpdateInterval(Bonus_Rate + randint(-50, 50), function () {
-    if (Math.percentChance(25) && Has_Ball == false) {
+    if (Math.percentChance(20) && (Has_Ball == false && Has_Board == false)) {
         Beach_Ball = sprites.create(img`
             ...................
             ......fffffff......
@@ -2349,5 +2375,30 @@ game.onUpdateInterval(Bonus_Rate + randint(-50, 50), function () {
             ......fffffff......
             `, SpriteKind.BeachBall)
         Obstacle_Properties(Beach_Ball)
+    } else if (Math.percentChance(10) && (Has_Ball == false && Has_Board == false)) {
+        BoogieBoard = sprites.create(img`
+            ..ff............ff.
+            ..f7f..........f7f.
+            ..f77ffffffffff77f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ..f7774aaaaaa4777f.
+            ...f774aaaaaa477f..
+            ....f74aaaaaa47f...
+            .....ffffffffff....
+            `, SpriteKind.Boogie_Board)
+        Obstacle_Properties(BoogieBoard)
+        BoogieBoard.z = 1
     }
 })
