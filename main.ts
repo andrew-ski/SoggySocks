@@ -7,6 +7,7 @@ namespace SpriteKind {
     export const BeachBall = SpriteKind.create()
     export const Boogie_Board = SpriteKind.create()
     export const P2 = SpriteKind.create()
+    export const Title = SpriteKind.create()
 }
 function pebble () {
     Pebbles = sprites.create(img`
@@ -2288,6 +2289,44 @@ function initWave () {
     Wave.setPosition(80, 16)
     Wave.z = 4
 }
+function SoggySocks () {
+    TitleScreen = sprites.create(img`
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ..............ffffffff.....................................................................ffffffff.............................................................
+        .............fffffffff....................................................................fffffffff.............................................................
+        ............ffffffffff...................................................................ffffffffff.............................................................
+        ............ffff.........................................................................ffff...................................................................
+        ............ffff..............................fff...........fff...fff.....fff............ffff...................................................................
+        ............ffff........................ffff..fff.....ffff..fff...fff.....fff............ffff...................................fff............fff..............
+        ............ffffff.....................fffff.ffff....fffff.ffff...ffff...ffff............ffffff.................................fff..........fffffff............
+        ............fffffff...................ffffffffffff..ffffffffffff..fffff..ffff............fffffff.....................ffffff.....fff.ffff.....fffffff............
+        .............fffffff..................ffff.ffffffff.ffff.ffffffff..fffffffff..............fffffff........fff.......ffffffff.....ffffffff....ffffffff............
+        ...............ffffff.................fffffffffffff.fffffffffffff..fffffffff................ffffff.....fffffff.....ffffffff.....ffffffff....ffff................
+        ................fffff.......fff.......ffffffff..fff.ffffffff..fff....fffffff.................fffff....fffffffff...fffff........fffffff......fffff...............
+        ..................ffff....ffffffff....fffffff...fff.fffffff...fff....ffffff....................ffff..ffffffffff...ffff.........ffffff.......fffff...............
+        ...........fff....ffff..ffffffffffff..fffff.....fff.fffff.....fff......ffff.............fff....ffff..ffff...fff...fff..........ffffff........fffff..............
+        ..........ffff...fffff..fffffffffffff..........ffff..........ffff.....fffff............ffff...fffff..fff...ffff...fff..........ffffffff.......ffff..............
+        ..........ffff.fffffff..ffff....fffff...fff....ffff...fff....ffff....fffff.............ffff.fffffff..fff..fffff...fff....fff...fffffffff....ffffff..............
+        ..........fffffffffff...ffff.....ffff...fff...ffff....fff...ffff.....ffff..............fffffffffff...fffffffff....ffffffffff...fff.ffffff...ffffff..............
+        ..........fffffffff.....ffffffffffff....ffffffffff....ffffffffff.....fff...............fffffffff.....ffffffff.....ffffffffff...fff...ffff...ffffff..............
+        ............fffff........fffffffffff....fffffffff.....fffffffff......fff.................fffff........ffffff.......ffffffff..........ffff....fffff..............
+        ............ffff..........fffffffff.....ffffffff......ffffffff.......fff.................ffff...................................................................
+        .....................................................................fff........................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        ................................................................................................................................................................
+        `, SpriteKind.Title)
+    TitleScreen.y = 30
+    TitleScreen.z = 4
+}
 function initP1 () {
     P1 = sprites.create(img`
         . . . . . . . . . . . . . 
@@ -2675,15 +2714,15 @@ sprites.onOverlap(SpriteKind.Pebble, SpriteKind.Enemy, function (sprite, otherSp
     sprite.destroy()
 })
 blockMenu.onMenuOptionSelected(function (option, index) {
+    blockMenu.closeMenu()
     blockMenu.setControlsEnabled(false)
-    initP1()
-    initWave()
+    TitleScreen.destroy()
     if (option == "Multi-Player") {
         Surfer()
     }
     game.splash("You wore socks & sandals.", "The tide is coming in.")
     game.splash("DON'T GET WET!")
-    scene.setBackgroundColor(13)
+    Pause = false
 })
 sprites.onOverlap(SpriteKind.P2, SpriteKind.BeachBall, function (sprite, otherSprite) {
     if (sprite.x < otherSprite.x) {
@@ -2748,6 +2787,7 @@ let Beach_Ball: Sprite = null
 let Crab2: Sprite = null
 let P2: Sprite = null
 let Stars: Sprite = null
+let TitleScreen: Sprite = null
 let Wave: Sprite = null
 let RogueWave2: Sprite = null
 let P1: Sprite = null
@@ -2757,6 +2797,8 @@ let Pebbles: Sprite = null
 let Has_Board = false
 let Has_Ball = false
 let RunSpeed = 0
+let Pause = false
+Pause = true
 info.setScore(0)
 RunSpeed = -65
 let ObsticalRate = 2000
@@ -2764,104 +2806,122 @@ let Bonus_Rate = 1800
 let WaveRate = 4000
 Has_Ball = false
 Has_Board = false
+SoggySocks()
+initWave()
+initP1()
+scene.setBackgroundColor(13)
 blockMenu.setControlsEnabled(true)
-blockMenu.setColors(15, 1)
-blockMenu.showMenu(["Single-Player", "Multi-Player"], MenuStyle.List, MenuLocation.FullScreen)
+blockMenu.setColors(15, 13)
+blockMenu.showMenu(["Single-Player", "Multi-Player"], MenuStyle.List, MenuLocation.BottomHalf)
 game.onUpdate(function () {
-    for (let value of sprites.allOfKind(SpriteKind.RogueWave)) {
-        value.y = Wave.bottom
-    }
-    if (Has_Ball == true) {
-        for (let value2 of sprites.allOfKind(SpriteKind.BeachBall)) {
-            value2.setPosition(P1.x, P1.bottom)
+    if (Pause == false) {
+        for (let value of sprites.allOfKind(SpriteKind.RogueWave)) {
+            value.y = Wave.bottom
         }
-    }
-    if (Has_Board == true) {
-        for (let value3 of sprites.allOfKind(SpriteKind.Boogie_Board)) {
-            value3.setPosition(P1.x, P1.y + 8)
+        if (Has_Ball == true) {
+            for (let value2 of sprites.allOfKind(SpriteKind.BeachBall)) {
+                value2.setPosition(P1.x, P1.bottom)
+            }
         }
-    } else {
-        P1.setVelocity(0, 0)
+        if (Has_Board == true) {
+            for (let value3 of sprites.allOfKind(SpriteKind.Boogie_Board)) {
+                value3.setPosition(P1.x, P1.y + 8)
+            }
+        } else {
+            P1.setVelocity(0, 0)
+        }
     }
 })
 game.onUpdateInterval(WaveRate, function () {
-    Spawn_RogueWave()
+    if (Pause == false) {
+        Spawn_RogueWave()
+    }
 })
 game.onUpdateInterval(7500, function () {
-    if (WaveRate > 1000) {
-        WaveRate += -400
-    }
-    if (ObsticalRate > 500) {
-        ObsticalRate += -250
-    }
-    if (RunSpeed >= -120) {
-        RunSpeed += -7.5
-    }
-    if (Bonus_Rate < 4000) {
-        Bonus_Rate += 100
+    if (Pause == false) {
+        if (WaveRate > 1000) {
+            WaveRate += -400
+        }
+        if (ObsticalRate > 500) {
+            ObsticalRate += -250
+        }
+        if (RunSpeed >= -120) {
+            RunSpeed += -7.5
+        }
+        if (Bonus_Rate < 4000) {
+            Bonus_Rate += 100
+        }
     }
 })
 game.onUpdateInterval(1000, function () {
-    info.changeScoreBy(1)
-    Spawn_Stars()
+    if (Pause == false) {
+        info.changeScoreBy(1)
+        Spawn_Stars()
+    }
 })
 game.onUpdateInterval(Bonus_Rate, function () {
-    if (Math.percentChance(35) && (Has_Ball == false && Has_Board == false)) {
-        if (Math.percentChance(50)) {
-            Beach_Ball = sprites.create(img`
-                ...................
-                ......fffffff......
-                ....ff111f888ff....
-                ...ff1111f8888ff...
-                ...f3f111f888f1f...
-                ..f333f11f88f111f..
-                ..f3333f1f8f1111f..
-                ..f33333fff11111f..
-                ..fffffff1fffffff..
-                ..f11111fff33333f..
-                ..f1111f5f1f3333f..
-                ..f111f55f11f333f..
-                ...f1f555f111f3f...
-                ...ff5555f1111ff...
-                ....ff555f111ff....
-                ......fffffff......
-                `, SpriteKind.BeachBall)
-            Obstacle_Properties(Beach_Ball)
-        } else {
-            BoogieBoard = sprites.create(img`
-                ff............ff
-                f7f..........f7f
-                f77ffffffffff77f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                f7774aaaaaa4777f
-                .f774aaaaaa477f.
-                ..f74aaaaaa47f..
-                ...ffffffffff...
-                `, SpriteKind.Boogie_Board)
-            Obstacle_Properties(BoogieBoard)
-            BoogieBoard.z = 1
+    if (Pause == false) {
+        if (Math.percentChance(35) && (Has_Ball == false && Has_Board == false)) {
+            if (Math.percentChance(50)) {
+                Beach_Ball = sprites.create(img`
+                    ...................
+                    ......fffffff......
+                    ....ff111f888ff....
+                    ...ff1111f8888ff...
+                    ...f3f111f888f1f...
+                    ..f333f11f88f111f..
+                    ..f3333f1f8f1111f..
+                    ..f33333fff11111f..
+                    ..fffffff1fffffff..
+                    ..f11111fff33333f..
+                    ..f1111f5f1f3333f..
+                    ..f111f55f11f333f..
+                    ...f1f555f111f3f...
+                    ...ff5555f1111ff...
+                    ....ff555f111ff....
+                    ......fffffff......
+                    `, SpriteKind.BeachBall)
+                Obstacle_Properties(Beach_Ball)
+            } else {
+                BoogieBoard = sprites.create(img`
+                    ff............ff
+                    f7f..........f7f
+                    f77ffffffffff77f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    f7774aaaaaa4777f
+                    .f774aaaaaa477f.
+                    ..f74aaaaaa47f..
+                    ...ffffffffff...
+                    `, SpriteKind.Boogie_Board)
+                Obstacle_Properties(BoogieBoard)
+                BoogieBoard.z = 1
+            }
         }
     }
 })
 game.onUpdateInterval(200, function () {
-    pebble()
+    if (Pause == false) {
+        pebble()
+    }
 })
 game.onUpdateInterval(ObsticalRate, function () {
-    Spawn_Rocks()
-    Spawn_Crabs()
-    if (info.score() > 30) {
+    if (Pause == false) {
         Spawn_Rocks()
+        Spawn_Crabs()
+        if (info.score() > 30) {
+            Spawn_Rocks()
+        }
     }
 })
