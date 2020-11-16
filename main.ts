@@ -2037,8 +2037,8 @@ sprites.onOverlap(SpriteKind.P2, SpriteKind.Boogie_Board, function (sprite, othe
     } else {
         otherSprite.setVelocity(0, 50)
     }
-    pause(1000)
-    otherSprite.setVelocity(0, -70)
+    pause(1200)
+    otherSprite.setVelocity(0, RunSpeed)
 })
 sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Obstacle, function (sprite, otherSprite) {
     if (Has_Ball == true) {
@@ -2644,9 +2644,10 @@ function Surfer () {
     200,
     true
     )
-    P2.setPosition(22, 15)
+    P2.setPosition(22, 18)
     P2.z = 6
-    controller.player2.moveSprite(P2, 70, 0)
+    P2.setFlag(SpriteFlag.StayInScreen, true)
+    controller.player2.moveSprite(P2, 100, 0)
 }
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.follow(otherSprite, 200)
@@ -2673,6 +2674,17 @@ sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSpr
 sprites.onOverlap(SpriteKind.Pebble, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
 })
+blockMenu.onMenuOptionSelected(function (option, index) {
+    blockMenu.setControlsEnabled(false)
+    initP1()
+    initWave()
+    if (option == "Multi-Player") {
+        Surfer()
+    }
+    game.splash("You wore socks & sandals.", "The tide is coming in.")
+    game.splash("DON'T GET WET!")
+    scene.setBackgroundColor(13)
+})
 sprites.onOverlap(SpriteKind.P2, SpriteKind.BeachBall, function (sprite, otherSprite) {
     if (sprite.x < otherSprite.x) {
         otherSprite.setVelocity(30, 50)
@@ -2681,8 +2693,8 @@ sprites.onOverlap(SpriteKind.P2, SpriteKind.BeachBall, function (sprite, otherSp
     } else {
         otherSprite.setVelocity(0, 50)
     }
-    pause(1000)
-    otherSprite.setVelocity(0, -70)
+    pause(1200)
+    otherSprite.setVelocity(0, RunSpeed)
 })
 function Spawn_Crabs () {
     if (Math.percentChance(33)) {
@@ -2745,9 +2757,6 @@ let Pebbles: Sprite = null
 let Has_Board = false
 let Has_Ball = false
 let RunSpeed = 0
-game.splash("You wore socks & sandals.", "The tide is coming in.")
-game.splash("DON'T GET WET!")
-scene.setBackgroundColor(13)
 info.setScore(0)
 RunSpeed = -65
 let ObsticalRate = 2000
@@ -2755,9 +2764,9 @@ let Bonus_Rate = 1800
 let WaveRate = 4000
 Has_Ball = false
 Has_Board = false
-Surfer()
-initP1()
-initWave()
+blockMenu.setControlsEnabled(true)
+blockMenu.setColors(15, 1)
+blockMenu.showMenu(["Single-Player", "Multi-Player"], MenuStyle.List, MenuLocation.FullScreen)
 game.onUpdate(function () {
     for (let value of sprites.allOfKind(SpriteKind.RogueWave)) {
         value.y = Wave.bottom
@@ -2820,26 +2829,26 @@ game.onUpdateInterval(Bonus_Rate, function () {
             Obstacle_Properties(Beach_Ball)
         } else {
             BoogieBoard = sprites.create(img`
-                ..ff............ff.
-                ..f7f..........f7f.
-                ..f77ffffffffff77f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ..f7774aaaaaa4777f.
-                ...f774aaaaaa477f..
-                ....f74aaaaaa47f...
-                .....ffffffffff....
+                ff............ff
+                f7f..........f7f
+                f77ffffffffff77f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                f7774aaaaaa4777f
+                .f774aaaaaa477f.
+                ..f74aaaaaa47f..
+                ...ffffffffff...
                 `, SpriteKind.Boogie_Board)
             Obstacle_Properties(BoogieBoard)
             BoogieBoard.z = 1
