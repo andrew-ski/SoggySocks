@@ -6,6 +6,7 @@ namespace SpriteKind {
     export const Crab = SpriteKind.create()
     export const BeachBall = SpriteKind.create()
     export const Boogie_Board = SpriteKind.create()
+    export const P2 = SpriteKind.create()
 }
 function pebble () {
     Pebbles = sprites.create(img`
@@ -2028,6 +2029,17 @@ sprites.onOverlap(SpriteKind.Obstacle, SpriteKind.Enemy, function (sprite, other
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Obstacle, function (sprite, otherSprite) {
     sprite.x += 16
 })
+sprites.onOverlap(SpriteKind.P2, SpriteKind.Boogie_Board, function (sprite, otherSprite) {
+    if (sprite.x < otherSprite.x) {
+        otherSprite.setVelocity(30, 50)
+    } else if (sprite.x > otherSprite.x) {
+        otherSprite.setVelocity(-30, 50)
+    } else {
+        otherSprite.setVelocity(0, 50)
+    }
+    pause(1000)
+    otherSprite.setVelocity(0, -70)
+})
 sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Obstacle, function (sprite, otherSprite) {
     if (Has_Ball == true) {
         sprite.destroy()
@@ -2500,6 +2512,142 @@ sprites.onOverlap(SpriteKind.BeachBall, SpriteKind.Crab, function (sprite, other
         sprite.x += 8
     }
 })
+function Surfer () {
+    P2 = sprites.create(img`
+        ..9..........9..
+        1.19........91.1
+        ...9........9...
+        ...9........9...
+        ...19......91...
+        ....9......9....
+        .1..19....91..1.
+        ...1.9....9.1...
+        .....1....1.....
+        ................
+        ff............ff
+        f5f..........f5f
+        f55ffffffffff55f
+        f555a222222a555f
+        f555aff22ffa555f
+        f555affffffa555f
+        f5bbfddddddfbb5f
+        f5bdcddddddfdb5f
+        f5fbffffffffbf5f
+        f55ffffffffff55f
+        f55ffffffffff55f
+        f5ffffffffffff5f
+        f5ffffffffffff5f
+        f5ff44f444ffff5f
+        f5f44f444fffff5f
+        f5f444444f44ff5f
+        f5ff44444444ff5f
+        .f5ff444444ff5f.
+        ..f5ff4444ff5f..
+        ...ffffffffff...
+        `, SpriteKind.P2)
+    animation.runImageAnimation(
+    P2,
+    [img`
+        ..9..........9..
+        1.19........91.1
+        ...9........9...
+        ...9........9...
+        ...19......91...
+        ....9......9....
+        .1..19....91..1.
+        ...1.9....9.1...
+        .....1....1.....
+        ................
+        ff............ff
+        f5f..........f5f
+        f55ffffffffff55f
+        f555a222222a555f
+        f555aff22ffa555f
+        f555affffffa555f
+        f5bbfddddddfbb5f
+        f5bdcddddddfdb5f
+        f5fbffffffffbf5f
+        f55ffffffffff55f
+        f55ffffffffff55f
+        f5ffffffffffff5f
+        f5ffffffffffff5f
+        f5ff44f444ffff5f
+        f5f44f444fffff5f
+        f5f444444f44ff5f
+        f5ff44444444ff5f
+        .f5ff444444ff5f.
+        ..f5ff4444ff5f..
+        ...ffffffffff...
+        `,img`
+        1.9..........9.1
+        ..19........91..
+        ...9........9...
+        ...9........9...
+        ...19......91...
+        ..1.9......9.1..
+        ....11....11....
+        .....9....9.....
+        .....9....9.....
+        ................
+        ff............ff
+        f5f..........f5f
+        f55ffffffffff55f
+        f555a222222a555f
+        f555aff22ffa555f
+        f555affffffa555f
+        f5bbfddddddfbb5f
+        f5bdcddddddfdb5f
+        f5fbffffffffbf5f
+        f55ffffffffff55f
+        f55ffffffffff55f
+        f5ffffffffffff5f
+        f5ffffffffffff5f
+        f5ff44f444ffff5f
+        f5f44f444fffff5f
+        f5f444444f44ff5f
+        f5ff44444444ff5f
+        .f5ff444444ff5f.
+        ..f5ff4444ff5f..
+        ...ffffffffff...
+        `,img`
+        .19..........91.
+        ..19........91..
+        .1.9........9.1.
+        ...9........9...
+        ...11......11...
+        ....9......9....
+        ....19....91....
+        .....9....9.....
+        .....9....9.....
+        ................
+        ff............ff
+        f5f..........f5f
+        f55ffffffffff55f
+        f555a222222a555f
+        f555aff22ffa555f
+        f555affffffa555f
+        f5bbfddddddfbb5f
+        f5bdcddddddfdb5f
+        f5fbffffffffbf5f
+        f55ffffffffff55f
+        f55ffffffffff55f
+        f5ffffffffffff5f
+        f5ffffffffffff5f
+        f5ff44f444ffff5f
+        f5f44f444fffff5f
+        f5f444444f44ff5f
+        f5ff44444444ff5f
+        .f5ff444444ff5f.
+        ..f5ff4444ff5f..
+        ...ffffffffff...
+        `],
+    200,
+    true
+    )
+    P2.setPosition(22, 15)
+    P2.z = 6
+    controller.player2.moveSprite(P2, 70, 0)
+}
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSprite) {
     sprite.follow(otherSprite, 200)
     otherSprite.x += randint(-20, 20)
@@ -2524,6 +2672,17 @@ sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSpr
 })
 sprites.onOverlap(SpriteKind.Pebble, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
+})
+sprites.onOverlap(SpriteKind.P2, SpriteKind.BeachBall, function (sprite, otherSprite) {
+    if (sprite.x < otherSprite.x) {
+        otherSprite.setVelocity(30, 50)
+    } else if (sprite.x > otherSprite.x) {
+        otherSprite.setVelocity(-30, 50)
+    } else {
+        otherSprite.setVelocity(0, 50)
+    }
+    pause(1000)
+    otherSprite.setVelocity(0, -70)
 })
 function Spawn_Crabs () {
     if (Math.percentChance(33)) {
@@ -2575,6 +2734,7 @@ sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSp
 })
 let Beach_Ball: Sprite = null
 let Crab2: Sprite = null
+let P2: Sprite = null
 let Stars: Sprite = null
 let Wave: Sprite = null
 let RogueWave2: Sprite = null
@@ -2595,6 +2755,7 @@ let Bonus_Rate = 1800
 let WaveRate = 4000
 Has_Ball = false
 Has_Board = false
+Surfer()
 initP1()
 initWave()
 game.onUpdate(function () {
