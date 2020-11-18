@@ -2047,7 +2047,7 @@ function NewHighScore () {
             .......cbbb1....bbbb1...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1..........cbbbbbb1............cbbbbbbbb1....cbbbbbbbbbb.....cbbb1...cbbbb1..cbbbbbbbbb1......
             `, SpriteKind.Pebble)
         NEWHS.setVelocity(0, RunSpeed)
-        NEWHS.setPosition(80, 120)
+        NEWHS.setPosition(80, 140)
         NEWHS.z = 4
     }
 }
@@ -2719,6 +2719,7 @@ function Surfer () {
     controller.player2.moveSprite(P2, 100, 0)
 }
 sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSprite) {
+    controller.moveSprite(P1, -90, 0)
     sprite.follow(otherSprite, 200)
     otherSprite.x += randint(-20, 20)
     pause(100)
@@ -2732,13 +2733,14 @@ sprites.onOverlap(SpriteKind.Crab, SpriteKind.Player, function (sprite, otherSpr
     sprite.setPosition(P1.x, P1.y)
     pause(100)
     otherSprite.x += randint(-20, 20)
+    sprite.setPosition(P1.x, P1.y)
     pause(100)
     otherSprite.x += randint(-20, 20)
     sprite.setPosition(P1.x, P1.y)
+    pause(500)
     sprite.setPosition(P1.x, P1.y)
-    pause(250)
     sprite.destroy()
-    otherSprite.vx += randint(-50, 50)
+    controller.moveSprite(P1, 90, 0)
 })
 sprites.onOverlap(SpriteKind.Pebble, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
@@ -2747,11 +2749,11 @@ blockMenu.onMenuOptionSelected(function (option, index) {
     blockMenu.closeMenu()
     blockMenu.setControlsEnabled(false)
     TitleScreen.destroy()
+    game.splash("You wore socks & sandals.", "The tide is coming in.")
+    game.splash("DON'T GET WET!")
     if (option == "Multi-Player") {
         Surfer()
     }
-    game.splash("You wore socks & sandals.", "The tide is coming in.")
-    game.splash("DON'T GET WET!")
     Pause = false
 })
 sprites.onOverlap(SpriteKind.P2, SpriteKind.BeachBall, function (sprite, otherSprite) {
