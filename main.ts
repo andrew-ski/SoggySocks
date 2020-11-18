@@ -2015,12 +2015,42 @@ function Spawn_RogueWave () {
     RogueWave2.setPosition(randint(0, 160), Wave.bottom)
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.RogueWave, function (sprite, otherSprite) {
-    game.splash("Soggy Socks")
-    game.over(false, effects.bubbles)
+    if (BeatHighScore == true) {
+        game.splash("Soggy Socks")
+        game.over(true, effects.clouds)
+    } else {
+        game.splash("Soggy Socks")
+        game.over(false, effects.bubbles)
+    }
 })
 sprites.onOverlap(SpriteKind.Player, SpriteKind.BeachBall, function (sprite, otherSprite) {
     Has_Ball = true
 })
+function NewHighScore () {
+    if (BeatHighScore == false) {
+        NEWHS = sprites.create(img`
+            .......cbbb1....bb1bb...cbbbbbbb11b...cbbbbbbbbbb1...cbbb1....bbbb1..............cbbbbb11b.......cbbbbbbb1......cbbbbbbb1.......cbbbbbb1.......cbbbbbbbbb1......
+            .......cbbb1....bbbbb...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1.........cbbbbbbbbbbbbb.....cbbbbbbbbb1.....cbbbbbbbb11.....cbbbbbbb11......cbbbbbbbbb1......
+            .......cbbb1....bbb1b...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1.........cbbbbbbbbbbbb1....cbbbbbbbbbb1....cbbbbbbbbbbb1....cbbbbbbbb11.....cbbbbbbbbb1......
+            .......cbbb1....bbbbb...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1.........cbbbbbbbbbbbb1....cbbbbbbbbbb1....cbbbbbbbbbbb1....cbbbbbbbbb11....cbbbbbbbbb1......
+            .......cbbb1....bbbb1...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1.........cbbbbbbbbbbbb1....cbbbbbbbbbb1...cbbbbbbbbbbbb1....cbbbbbbbbbbb1...cbbbbbbbbb1......
+            .......cbbbcbbbbbbbb1......cbbb1.....cbbb1...........cbbbbbbbbbbbb1.........cbbbbb1111........cbbbbb11.......cbbbbbc1bbbbb1....cbbbbbbbbbbbb...cbbc1............
+            .......cbbbbbbbbbbbb1......cbbb1.....cbbb1...........cbbbbbbbbbbbb1..........cbbbbbbbb1.......cbbbb1.........cbbbbc1.bbbbbbb...cbbc1.bbbbbbb...cbbbbbbbbb1......
+            .......cbbbbbbbbbbbb1......cbbb1.....cbbb1...........cbbbbbbbbbbbb1..........ccbbbbbbbb11.....cbbb1..........cbbbbc...bbbbb1...cbbbbbbbbbbbb...cbbbbbbbbb1......
+            .......cbbbbbbbbbbbb1......cbbb1.....cbbb1...bbb11...cbbbbbbbbbbbb1...........cbbbbbbbbbbb1...cbbb1..........cbbbcc...bbbbb1...cbbbbbbbbbbbb...cbbbbbbbbb1......
+            .......cbbbcbbbbbbbb1......cbbb1.....cbbb1...bbbb1...cbbbbbbbbbbbb1.............cbbbbbbbbb1...cbbbb1.........cbbc1....bbbbb1...cbbbbbbbbbbbb...cbbbbbbbbb1......
+            .......cbbb1....bbbb1......cbbb1.....cbbbb1..bbbb1...cbbb1....bbbb1..............cbbbbbbbb1...cbbbbbbbbb111..cbbbbc1.bbbbbb1...cbbbbbbbbbbb1...cbbbbbbbbb1......
+            .......cbbb1....bbbb1...cbbcbbbbb11...cbbbbbbbbbb1...cbbb1....bbbb1.............cbbbbbbbbb1...cbbbbbbbbbbb1..cbbbbbbbbbbbbb1...cbbbbbbbbbbb11..cbbc1............
+            .......cbbb1....bbbb1...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1...........cbbbbbbbbbbb1...cbbbbbbbbbbb1..cbbbbbbbbbbbbb11..cbbbbbbbbbbbb1..cbbbbbbbbb1......
+            .......cbbb1....bbbb1...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1..........cbbbbbbbb11......cbbbbbbbbbbb1..cbbbbbbbbbbbbb1...cbbb1.cbbbbbb1..cbbbbbbbbb1......
+            .......cbbb1....bbbb1...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1..........cbbbbbbb1.........ccbbbbbbbbb1..cbbbbbbbbbbbb1....cbbb1..cbbbbb1..cbbbbbbbbb1......
+            .......cbbb1....bbbb1...cbbbbbbbbb1...cbbbbbbbbbb1...cbbb1....bbbb1..........cbbbbbb1............cbbbbbbbb1....cbbbbbbbbbb.....cbbb1...cbbbb1..cbbbbbbbbb1......
+            `, SpriteKind.Pebble)
+        NEWHS.setVelocity(0, RunSpeed)
+        NEWHS.setPosition(80, 120)
+        NEWHS.z = 4
+    }
+}
 sprites.onOverlap(SpriteKind.Boogie_Board, SpriteKind.Enemy, function (sprite, otherSprite) {
     sprite.destroy()
 })
@@ -2780,14 +2810,20 @@ function Spawn_Crabs () {
     }
 }
 sprites.onOverlap(SpriteKind.Player, SpriteKind.Enemy, function (sprite, otherSprite) {
-    game.splash("Soggy Socks")
-    game.over(false, effects.bubbles)
+    if (BeatHighScore == true) {
+        game.splash("Soggy Socks")
+        game.over(true, effects.clouds)
+    } else {
+        game.splash("Soggy Socks")
+        game.over(false, effects.bubbles)
+    }
 })
 let Beach_Ball: Sprite = null
 let Crab2: Sprite = null
 let P2: Sprite = null
 let Stars: Sprite = null
 let TitleScreen: Sprite = null
+let NEWHS: Sprite = null
 let Wave: Sprite = null
 let RogueWave2: Sprite = null
 let P1: Sprite = null
@@ -2798,6 +2834,8 @@ let Has_Board = false
 let Has_Ball = false
 let RunSpeed = 0
 let Pause = false
+let BeatHighScore = false
+BeatHighScore = false
 Pause = true
 info.setScore(0)
 RunSpeed = -65
@@ -2829,6 +2867,10 @@ game.onUpdate(function () {
             }
         } else {
             P1.setVelocity(0, 0)
+        }
+        if (info.score() > info.highScore()) {
+            NewHighScore()
+            BeatHighScore = true
         }
     }
 })
